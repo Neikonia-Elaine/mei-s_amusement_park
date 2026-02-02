@@ -5,26 +5,70 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Unity WebGL Player | GGJ2026-Mask</title>
   </head>
-  <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width=1920 height=1080 tabindex="-1" style="width: 1920px; height: 1080px; background: #231F20"></canvas>
+  <body style="margin:0; background:#0f1115;">
+    <div id="page">
+      <header style="color:#cbd5e1; font: 16px/1.4 system-ui; margin-bottom: 12px;">
+        Explore the amusement park, use WASD or cursor click to walk, use mask as a bridge to see what's wrong here...
+      </header>
+  
+      <div id="unity-container">
+        <canvas id="unity-canvas" tabindex="-1"></canvas>
+      </div>
+    </div>
+  
     <script src="Build/GGJMask.loader.js"></script>
     <script>
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-
-        var canvas = document.querySelector("#unity-canvas");
+      const page = document.querySelector("#page");
+      const container = document.querySelector("#unity-container");
+      const canvas = document.querySelector("#unity-canvas");
+  
+      document.body.style.minHeight = "100vh";
+      document.body.style.display = "flex";
+      document.body.style.alignItems = "center";
+      document.body.style.justifyContent = "center";
+  
+      const PADDING = 32;
+  
+      const TARGET_W = 16;
+      const TARGET_H = 9;
+  
+      function resizeCenterFit() {
+        const ww = window.innerWidth - PADDING * 2;
+        const wh = window.innerHeight - PADDING * 2;
+  
+        const scale = Math.min(ww / TARGET_W, wh / TARGET_H);
+        const cw = Math.floor(TARGET_W * scale);
+        const ch = Math.floor(TARGET_H * scale);
+  
+        container.style.width = cw + "px";
+        container.style.height = ch + "px";
+        container.style.borderRadius = "12px";
+        container.style.overflow = "hidden";
+        container.style.boxShadow = "0 12px 40px rgba(0,0,0,0.35)";
+        container.style.background = "#231F20"; 
+  
         canvas.style.width = "100%";
         canvas.style.height = "100%";
-        canvas.style.position = "fixed";
-
-        document.body.style.textAlign = "left";
+        canvas.style.display = "block";
+        canvas.style.background = "#231F20";
+        page.style.display = "flex";
+        page.style.flexDirection = "column";
+        page.style.alignItems = "center";
+        page.style.padding = PADDING + "px";
+        page.style.boxSizing = "border-box";
       }
-
-      createUnityInstance(document.querySelector("#unity-canvas"), {
+  
+      window.addEventListener("resize", resizeCenterFit);
+      resizeCenterFit();
+  
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        const meta = document.createElement("meta");
+        meta.name = "viewport";
+        meta.content = "width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+        document.head.appendChild(meta);
+      }
+  
+      createUnityInstance(canvas, {
         dataUrl: "Build/GGJMask.data",
         frameworkUrl: "Build/GGJMask.framework.js",
         codeUrl: "Build/GGJMask.wasm",
@@ -32,9 +76,9 @@
         companyName: "DefaultCompany",
         productName: "GGJ2026-Mask",
         productVersion: "1.0",
-        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+        matchWebGLToCanvasSize = true
       });
     </script>
   </body>
+
 </html>
